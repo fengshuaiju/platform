@@ -222,7 +222,7 @@
             async initData(){
                 try{
                     const countData = await getFoodsCount({restaurant_id: this.restaurant_id});
-                    if (countData.status == 1) {
+                    if (countData.status === 1) {
                         this.count = countData.count;
                     }else{
                         throw new Error('获取数据失败');
@@ -300,20 +300,20 @@
                 }
             },
             handleEdit(row) {
-            	this.getSelectItemData(row, 'edit')
+            	this.getSelectItemData(row, 'edit');
                 this.dialogFormVisible = true;
             },
             async getSelectItemData(row, type){
             	const restaurant = await getResturantDetail(row.restaurant_id);
-            	const category = await getMenuById(row.category_id)
+            	const category = await getMenuById(row.category_id);
                 this.selectTable = {...row, ...{restaurant_name: restaurant.name, restaurant_address: restaurant.address, category_name: category.name}};
 
-                this.selectMenu = {label: category.name, value: row.category_id}
+                this.selectMenu = {label: category.name, value: row.category_id};
                 this.tableData.splice(row.index, 1, {...this.selectTable});
                 this.$nextTick(() => {
                     this.expendRow.push(row.index);
-                })
-                if (type == 'edit' && this.restaurant_id != row.restaurant_id) {
+                });
+                if (type === 'edit' && this.restaurant_id !== row.restaurant_id) {
                 	this.getMenu();
                 }
             },
@@ -324,7 +324,7 @@
             async handleDelete(index, row) {
                 try{
                     const res = await deleteFood(row.item_id);
-                    if (res.status == 1) {
+                    if (res.status === 1) {
                         this.$message({
                             type: 'success',
                             message: '删除食品成功'
@@ -342,7 +342,7 @@
                 }
             },
             handleServiceAvatarScucess(res, file) {
-                if (res.status == 1) {
+                if (res.status === 1) {
                     this.selectTable.image_path = res.image_path;
                 }else{
                     this.$message.error('上传图片失败！');
@@ -365,8 +365,8 @@
                 try{
                 	const subData = {new_category_id: this.selectMenu.value, specs: this.specs};
                 	const postData = {...this.selectTable, ...subData};
-                    const res = await updateFood(postData)
-                    if (res.status == 1) {
+                    const res = await updateFood(postData);
+                    if (res.status === 1) {
                         this.$message({
                             type: 'success',
                             message: '更新食品信息成功'

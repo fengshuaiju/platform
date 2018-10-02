@@ -86,7 +86,7 @@
             async initData(){
                 try{
                     const countData = await getOrderCount({restaurant_id: this.restaurant_id});
-                    if (countData.status == 1) {
+                    if (countData.status === 1) {
                         this.count = countData.count;
                     }else{
                         throw new Error('获取数据失败');

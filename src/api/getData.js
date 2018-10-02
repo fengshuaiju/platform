@@ -1,10 +1,10 @@
-import fetch from '@/config/fetch'
+import fetch from '@/config/fetch';
 
 /**
  * 登陆
  */
 
-export const login = data => fetch('/admin/login', data, 'POST');
+export const login = data => fetch('/accounts/oauth/token', data, 'POST', '');
 
 /**
  * 退出

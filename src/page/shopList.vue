@@ -155,7 +155,7 @@
                 try{
                     this.city = await cityGuess();
                     const countData = await getResturantsCount();
-                    if (countData.status == 1) {
+                    if (countData.status === 1) {
                         this.count = countData.count;
                     }else{
                         throw new Error('获取数据失败');
@@ -174,16 +174,16 @@
                                 value: item.name,
                                 label: item.name,
                                 children: []
-                            }
+                            };
                             item.sub_categories.forEach((subitem, index) => {
-                                if (index == 0) {
+                                if (index === 0) {
                                     return
                                 }
                                 addnew.children.push({
                                     value: subitem.name,
                                     label: subitem.name,
                                 })
-                            })
+                            });
                             this.categoryOptions.push(addnew)
                         }
                     })
@@ -232,7 +232,7 @@
             async handleDelete(index, row) {
                 try{
                     const res = await deleteResturant(row.id);
-                    if (res.status == 1) {
+                    if (res.status === 1) {
                         this.$message({
                             type: 'success',
                             message: '删除店铺成功'
@@ -257,7 +257,7 @@
                             cityList.map(item => {
                                 item.value = item.address;
                                 return item;
-                            })
+                            });
                             cb(cityList)
                         }
                     }catch(err){
@@ -270,7 +270,7 @@
                 this.address = {address, latitude, longitude};
             },
             handleServiceAvatarScucess(res, file) {
-                if (res.status == 1) {
+                if (res.status === 1) {
                     this.selectTable.image_path = res.image_path;
                 }else{
                     this.$message.error('上传图片失败！');
@@ -293,8 +293,8 @@
                 try{
                     Object.assign(this.selectTable, this.address);
                     this.selectTable.category = this.selectedCategory.join('/');
-                    const res = await updateResturant(this.selectTable)
-                    if (res.status == 1) {
+                    const res = await updateResturant(this.selectTable);
+                    if (res.status === 1) {
                         this.$message({
                             type: 'success',
                             message: '更新店铺信息成功'

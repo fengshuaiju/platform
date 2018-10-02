@@ -26,7 +26,7 @@
     		async initData(){
     			try{
     				const res = await getUserCity();
-    				if (res.status == 1) {
+    				if (res.status === 1) {
     					this.pieData = res.user_city;
     				}else{
     					throw new Error(res)

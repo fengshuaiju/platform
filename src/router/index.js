@@ -1,7 +1,7 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 
-Vue.use(Router)
+Vue.use(Router);
 
 const login = r => require.ensure([], () => r(require('@/page/login')), 'login');
 const manage = r => require.ensure([], () => r(require('@/page/manage')), 'manage');
@@ -21,6 +21,9 @@ const adminSet = r => require.ensure([], () => r(require('@/page/adminSet')), 'a
 const sendMessage = r => require.ensure([], () => r(require('@/page/sendMessage')), 'sendMessage');
 const explain = r => require.ensure([], () => r(require('@/page/explain')), 'explain');
 
+////////
+const myUserList = r => require.ensure([], () => r(require('@/page/myUserList')), 'myUserList');
+
 const routes = [
 	{
 		path: '/',
@@ -34,7 +37,12 @@ const routes = [
 			path: '',
 			component: home,
 			meta: [],
+
 		},{
+            path: '/myUserList',
+            component: myUserList,
+            meta: ['我自己的', '我的用户'],
+        },{
 			path: '/addShop',
 			component: addShop,
 			meta: ['添加数据', '添加商铺'],
@@ -92,7 +100,7 @@ const routes = [
 			meta: ['说明', '说明'],
 		}]
 	}
-]
+];
 
 export default new Router({
 	routes,

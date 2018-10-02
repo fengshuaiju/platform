@@ -10,8 +10,8 @@ let baseUrl = '';
 let routerMode = 'hash';
 let baseImgPath;
 
-if (process.env.NODE_ENV == 'development') {
-	baseUrl = '';
+if (process.env.NODE_ENV === 'development') {
+    baseUrl = 'https://crazy-lobster.cn/api';
     baseImgPath = '/img/';
 }else{
 	baseUrl = '//elm.cangdu.org';

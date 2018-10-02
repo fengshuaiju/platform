@@ -7,7 +7,7 @@ export const setStore = (name, content) => {
 		content = JSON.stringify(content);
 	}
 	window.localStorage.setItem(name, content);
-}
+};
 
 /**
  * 获取localStorage
@@ -15,7 +15,7 @@ export const setStore = (name, content) => {
 export const getStore = name => {
 	if (!name) return;
 	return window.localStorage.getItem(name);
-}
+};
 
 /**
  * 删除localStorage
@@ -23,7 +23,7 @@ export const getStore = name => {
 export const removeStore = name => {
 	if (!name) return;
 	window.localStorage.removeItem(name);
-}
+};
 
 /**
  * 获取style样式
@@ -56,29 +56,29 @@ export const loadMore = (element, callback) => {
 
     document.body.addEventListener('scroll',() => {
        loadMore();
-    }, false)
+    }, false);
     //运动开始时获取元素 高度 和 offseTop, pading, margin
 	element.addEventListener('touchstart',() => {
         height = element.offsetHeight;
         setTop = element.offsetTop;
         paddingBottom = getStyle(element,'paddingBottom');
         marginBottom = getStyle(element,'marginBottom');
-    },{passive: true})
+    },{passive: true});
 
     //运动过程中保持监听 scrollTop 的值判断是否到达底部
     element.addEventListener('touchmove',() => {
        loadMore();
-    },{passive: true})
+    },{passive: true});
 
     //运动结束时判断是否有惯性运动，惯性运动结束判断是非到达底部
     element.addEventListener('touchend',() => {
        	oldScrollTop = document.body.scrollTop;
        	moveEnd();
-    },{passive: true})
+    },{passive: true});
     
     const moveEnd = () => {
         requestFram = requestAnimationFrame(() => {
-            if (document.body.scrollTop != oldScrollTop) {
+            if (document.body.scrollTop !== oldScrollTop) {
                 oldScrollTop = document.body.scrollTop;
                 loadMore();
                 moveEnd();
@@ -89,14 +89,14 @@ export const loadMore = (element, callback) => {
                 loadMore();
             }
         })
-    }
+    };
 
     const loadMore = () => {
         if (document.body.scrollTop + windowHeight >= height + setTop + paddingBottom + marginBottom) {
             callback();
         }
     }
-}
+};
 
 /**
  * 显示返回顶部按钮，开始、结束、运动 三个过程中调用函数判断是否达到目标点
@@ -107,23 +107,23 @@ export const showBack = callback => {
 
     document.addEventListener('scroll',() => {
        showBackFun();
-    }, false)
+    }, false);
     document.addEventListener('touchstart',() => {
        showBackFun();
-    },{passive: true})
+    },{passive: true});
 
     document.addEventListener('touchmove',() => {
        showBackFun();
-    },{passive: true})
+    },{passive: true});
 
     document.addEventListener('touchend',() => {
         oldScrollTop = document.body.scrollTop;
         moveEnd();
-    },{passive: true})
+    },{passive: true});
     
     const moveEnd = () => {
         requestFram = requestAnimationFrame(() => {
-            if (document.body.scrollTop != oldScrollTop) {
+            if (document.body.scrollTop !== oldScrollTop) {
                 oldScrollTop = document.body.scrollTop;
                 moveEnd();
             }else{
@@ -131,7 +131,7 @@ export const showBack = callback => {
             }
             showBackFun();
         })
-    }
+    };
 
     //判断是否达到目标点
     const showBackFun = () => {
@@ -141,7 +141,7 @@ export const showBack = callback => {
             callback(false);
         }
     }
-}
+};
 
 
 /**
@@ -177,7 +177,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
         } else {
             return getStyle(element, attr);
         }
-    }
+    };
     //根字体大小，需要从此将 rem 改成 px 进行运算
     const rootSize = parseFloat(document.documentElement.style.fontSize);
 
@@ -196,7 +196,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
 
     //去掉传入的后缀单位
     Object.keys(target).forEach(attr => {
-        if (unit[attr] == 'rem') {
+        if (unit[attr] === 'rem') {
             target[attr] = Math.ceil(parseInt(target[attr])*rootSize);
         }else{
             target[attr] = parseInt(target[attr]);
@@ -225,7 +225,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
                 case 'ease-in':
                     let oldspeed = remberSpeed[attr] || 0;
                     iSpeed = oldspeed + (target[attr] - initState[attr])/duration;
-                    remberSpeed[attr] = iSpeed
+                    remberSpeed[attr] = iSpeed;
                     break;
                 default:
                     speedBase = iCurrent;
@@ -238,7 +238,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
             //判断是否达步长之内的误差距离，如果到达说明到达目标点
             switch(mode){
                 case 'ease-out': 
-                    status = iCurrent != target[attr]; 
+                    status = iCurrent !== target[attr];
                     break;
                 case 'linear':
                     status = Math.abs(Math.abs(iCurrent) - Math.abs(target[attr])) > Math.abs(iSpeed);
@@ -247,7 +247,7 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
                     status = Math.abs(Math.abs(iCurrent) - Math.abs(target[attr])) > Math.abs(iSpeed);
                     break;
                 default:
-                    status = iCurrent != target[attr]; 
+                    status = iCurrent !== target[attr];
             }
 
             if (status) {
@@ -273,4 +273,4 @@ export const animate = (element, target, duration = 400, mode = 'ease-out', call
             }
         })
     }, 20);
-}
+};

@@ -247,16 +247,16 @@
     							value: item.name,
 						        label: item.name,
 						        children: []
-    						}
+    						};
     						item.sub_categories.forEach((subitem, index) => {
-    							if (index == 0) {
+    							if (index === 0) {
     								return
     							}
     							addnew.children.push({
     								value: subitem.name,
 						        	label: subitem.name,
     							})
-    						})
+    						});
     						this.categoryOptions.push(addnew)
 
     					}
@@ -273,7 +273,7 @@
 		    				cityList.map(item => {
 		    					item.value = item.address;
 		    					return item;
-		    				})
+		    				});
 		    				cb(cityList)
 	    				}
 	    			}catch(err){
@@ -287,21 +287,21 @@
 		    	console.log(this.formData.latitude, this.formData.longitude)
 		    },
 			handleShopAvatarScucess(res, file) {
-				if (res.status == 1) {
+				if (res.status === 1) {
 					this.formData.image_path = res.image_path;
 				}else{
 					this.$message.error('上传图片失败！');
 				}
 			},
 			handleBusinessAvatarScucess(res, file) {
-				if (res.status == 1) {
+				if (res.status === 1) {
 					this.formData.business_license_image = res.image_path;
 				}else{
 					this.$message.error('上传图片失败！');
 				}
 			},
 			handleServiceAvatarScucess(res, file) {
-				if (res.status == 1) {
+				if (res.status === 1) {
 					this.formData.catering_service_license_image = res.image_path;
 				}else{
 					this.$message.error('上传图片失败！');
@@ -346,28 +346,28 @@
 		          				icon_name: '减',
 					        	name: '满减优惠',
 					        	description: value,
-		          			}
+		          			};
 		          			break;
 		          		case '优惠大酬宾':
 		          			newObj= {
 		          				icon_name: '特',
 					        	name: '优惠大酬宾',
 					        	description: value,
-		          			}
+		          			};
 		          			break;
 		          		case '新用户立减':
 		          			newObj= {
 		          				icon_name: '新',
 					        	name: '新用户立减',
 					        	description: value,
-		          			}
+		          			};
 		          			break;
 		          		case '进店领券':
 		          			newObj= {
 		          				icon_name: '领',
 					        	name: '进店领券',
 					        	description: value,
-		          			}
+		          			};
 		          			break;
 		          	}
 		          	this.activities.push(newObj);
@@ -386,10 +386,10 @@
 					if (valid) {
 						Object.assign(this.formData, {activities: this.activities}, {
 							category: this.selectedCategory.join('/')
-						})
+						});
 						try{
 							let result = await addShop(this.formData);
-							if (result.status == 1) {
+							if (result.status === 1) {
 								this.$message({
 					            	type: 'success',
 					            	message: '添加成功'

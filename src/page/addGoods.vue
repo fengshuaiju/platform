@@ -72,7 +72,7 @@
 						<el-radio class="radio" v-model="foodSpecs" label="one">单规格</el-radio>
   						<el-radio class="radio" v-model="foodSpecs" label="more">多规格</el-radio>
 					</el-form-item>
-					<el-row v-if="foodSpecs == 'one'">
+					<el-row v-if="foodSpecs === 'one'">
 						<el-form-item label="包装费">
 							<el-input-number v-model="foodForm.specs[0].packing_fee" :min="0" :max="100"></el-input-number>
 						</el-form-item>
@@ -228,11 +228,11 @@
     		async initData(){
     			try{
     				const result = await getCategory(this.restaurant_id);
-	    			if (result.status == 1) {
+	    			if (result.status === 1) {
 	    				result.category_list.map((item, index) => {
 	    					item.value = index;
 	    					item.label = item.name;
-	    				})
+	    				});
 	    				this.categoryForm.categoryList = result.category_list;
 	    			}else{
 	    				console.log(result)
@@ -251,10 +251,10 @@
 							name: this.categoryForm.name,
 							description: this.categoryForm.description,
 							restaurant_id: this.restaurant_id,
-						}
+						};
 						try{
 							const result = await addCategory(params);
-							if (result.status == 1) {
+							if (result.status === 1) {
 								this.initData();
 								this.categoryForm.name = '';
 								this.categoryForm.description = '';
@@ -278,7 +278,7 @@
 				});
 			},
 			uploadImg(res, file) {
-				if (res.status == 1) {
+				if (res.status === 1) {
 					this.foodForm.image_path = res.image_path;
 				}else{
 					this.$message.error('上传图片失败！');
@@ -321,11 +321,11 @@
 							...this.foodForm,
 							category_id: this.selectValue.id,
 							restaurant_id: this.restaurant_id,
-						}
+						};
 						try{
 							const result = await addFood(params);
-							if (result.status == 1) {
-								console.log(result)
+							if (result.status === 1) {
+								console.log(result);
 								this.$message({
 					            	type: 'success',
 					            	message: '添加成功'

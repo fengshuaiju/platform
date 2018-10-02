@@ -63,7 +63,7 @@
             async initData(){
                 try{
                     const countData = await adminCount();
-                    if (countData.status == 1) {
+                    if (countData.status === 1) {
                         this.count = countData.count;
                     }else{
                         throw new Error('获取数据失败');
@@ -84,7 +84,7 @@
             async getAdmin(){
                 try{
                     const res = await adminList({offset: this.offset, limit: this.limit});
-                    if (res.status == 1) {
+                    if (res.status === 1) {
                     	this.tableData = [];
                     	res.data.forEach(item => {
                     		const tableItem = {
@@ -92,7 +92,7 @@
 						        user_name: item.user_name,
 						        admin: item.admin,
                                 city: item.city,
-                    		}
+                    		};
                     		this.tableData.push(tableItem)
                     	})
                     }else{
