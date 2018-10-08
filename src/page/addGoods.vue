@@ -109,7 +109,7 @@
 						</el-table>
 					</el-row>
 					<el-form-item>
-						<el-button type="primary" @click="addFood('foodForm')">确认添加食品</el-button>
+						<el-button type="primary" @click="addFood('goodsForm')">确认添加食品</el-button>
 					</el-form-item>
 	  			</el-form>
 	  			<el-dialog title="添加规格" v-model="dialogFormVisible">
@@ -150,7 +150,7 @@
     				name: '',
     				description: '',
     			},
-    			foodForm: {
+    			goodsForm: {
     				name: '',
     				description: '',
     				image_path: '',
@@ -279,7 +279,7 @@
 			},
 			uploadImg(res, file) {
 				if (res.status === 1) {
-					this.foodForm.image_path = res.image_path;
+					this.goodsForm.image_path = res.image_path;
 				}else{
 					this.$message.error('上传图片失败！');
 				}
@@ -297,14 +297,14 @@
 				return isRightType && isLt2M;
 			},
 			addspecs(){
-				this.foodForm.specs.push({...this.specsForm});
+				this.goodsForm.specs.push({...this.specsForm});
 				this.specsForm.specs = '';
 				this.specsForm.packing_fee = 0;
 				this.specsForm.price = 20;
 				this.dialogFormVisible = false;
 			},
 			handleDelete(index){
-				this.foodForm.specs.splice(index, 1);
+				this.goodsForm.specs.splice(index, 1);
 			},
 			tableRowClassName(row, index) {
 		        if (index === 1) {
@@ -318,7 +318,7 @@
 		    	this.$refs[foodForm].validate(async (valid) => {
 					if (valid) {
 						const params = {
-							...this.foodForm,
+							...this.goodsForm,
 							category_id: this.selectValue.id,
 							restaurant_id: this.restaurant_id,
 						};

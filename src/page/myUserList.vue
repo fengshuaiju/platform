@@ -3,23 +3,51 @@
         <head-top></head-top>
         <div class="table_container">
 
+            <el-form :inline="true" :model="form" class="demo-form-inline">
+                <el-form-item label="手机号">
+                    <el-input v-model="form.phone" placeholder="手机号"></el-input>
+                </el-form-item>
+
+                <el-form-item label="注册日期">
+                    <el-col :span="22">
+                        <el-form-item prop="date">
+                            <el-date-picker type="date" placeholder="选择日期" @change="changeDate" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="form.date" style="width: 100%;"></el-date-picker>
+                        </el-form-item>
+                    </el-col>
+                </el-form-item>
+
+                <el-form-item>
+                    <el-button type="primary" @click="onSubmit">查询</el-button>
+                </el-form-item>
+            </el-form>
+
+
             <el-table :data="tableData" highlight-current-row style="width: 100%">
                 <el-table-column type="index" width="100"></el-table-column>
-                <el-table-column property="registe_time" label="注册日期" width="220"></el-table-column>
-                <el-table-column property="username" label="用户姓名" width="220"></el-table-column>
-                <el-table-column property="city" label="注册地址"></el-table-column>
-                <el-table-column property="city1" label="注册地址"></el-table-column>
+                <el-table-column property="createdAt" label="注册日期" width="250"></el-table-column>
+                <el-table-column property="nickName" label="用户昵称" width="220"></el-table-column>
+                <el-table-column property="gender" label="性别" width="100"></el-table-column>
+                <el-table-column property="cellphone" label="电话" width="250"></el-table-column>
+                <el-table-column property="avatarUrl" label="头像" width="120">
+                    <template  slot-scope="scope">
+                        <img :src="scope.row.avatarUrl" class="avator" style="margin-top: 8px"/>
+                    </template>
+                </el-table-column>
+                <el-table-column label="操作">
+                    <template slot-scope="scope">
+                        <el-button size="middle" @click="handleInfo(scope.row.wechatOpenId)">详细信息</el-button>
+                    </template>
+                </el-table-column>
             </el-table>
 
             <!--页数-->
             <div class="Pagination" style="text-align: left;margin-top: 10px;">
-                <el-pagination
-                    @size-change="handleSizeChange"
-                    @current-change="handleCurrentChange"
-                    :current-page="currentPage"
-                    :page-size="20"
-                    layout="total, prev, pager, next"
-                    :total="count">
+                <el-pagination background layout="total, prev, pager, next, sizes, jumper" :page-sizes="[10, 20, 25, 30]"
+                                :page-size="limit"
+                               :total="count"
+                               :current-page="currentPage"
+                               @current-change="handleCurrentChange"
+                               @size-change="handleSizeChange">
                 </el-pagination>
             </div>
 
@@ -38,9 +66,16 @@
                 tableData: [],
                 currentRow: null,
                 offset: 0,
-                limit: 20,
-                count: 0,
+                limit: 10,
+                count: 0,//总数目
                 currentPage: 1,
+
+                localdate: '',
+                form: {
+                    phone: '',
+                    date: ''
+                },
+
             }
         },
         components: {
@@ -53,63 +88,58 @@
             ...mapGetters(['getToken']),
             initData() {
                 try {
-                    this.$axios({
-                        url: baseUrl + "/baby/user/list",
-                        data: {
-                            page: 0,
-                            size: 20
-                        },
-                        method: 'GET',
-                        headers: {
-                            'Authorization': 'Bearer ' + this.getToken()
-                        }
-                    }).then((res) => {
-                        this.tableData = res.data.content;
-                        this.offset = res.data.size * res.data.numberOfElements;
-                        this.limit = res.data.size;
-                        this.count = res.data.number;
-                        this.currentPage = res.data.number;
-
-                    }).catch((res) => {
-                        console.log(res)
-                    });
-
-                    // if (countData.status === 1) {
-                    //     this.count = countData.count;
-                    // } else {
-                    //     throw new Error('获取数据失败');
-                    // }
-                    // this.getUsers();
-
+                    this.getUserList(this.currentPage, this.limit);
                 } catch (err) {
                     console.log('获取数据失败', err);
                 }
             },
-
+            //更换每页大小
             handleSizeChange(val) {
-                console.log(`每页 ${val} 条`);
+                this.limit = val;
+                this.getUserList(this.currentPage, this.limit, this.localdate, this.form.phone);
             },
-
+            //更换页数
             handleCurrentChange(val) {
                 this.currentPage = val;
-                this.offset = (val - 1) * this.limit;
-                this.getUsers()
+                this.getUserList(this.currentPage, this.limit);
             },
 
-            async getUsers() {
-                const Users = await getUserList({offset: this.offset, limit: this.limit});
-                this.tableData = [];
-                Users.forEach(item => {
-                    const tableData = {};
-                    tableData.username = item.username;
-                    tableData.registe_time = item.registe_time;
-                    tableData.city = item.city;
-                    tableData.city1 = item.city1;
+            getUserList(page, size, date, phone) {
+                this.$axios({
+                    method: 'GET',
+                    url: baseUrl + "/baby/user/list",
+                    headers: {
+                        'Authorization': 'Bearer ' + this.getToken()
+                    },
+                    params: {
+                        page: page -1,
+                        size: size,
 
-                    this.tableData.push(tableData);
-                })
+                        date: date,
+                        phone: phone
+                    }
+                }).then((res) => {
+                    this.tableData = res.data.content;
+                    this.offset = res.data.size * res.data.numberOfElements;
+                    this.limit = res.data.size;
+                    this.count = res.data.totalElements;
+                    this.currentPage = res.data.number + 1;
+                }).catch((res) => {
+                    console.log(res)
+                });
             },
 
+            changeDate(val){
+                this.localdate = val;
+            },
+
+            onSubmit() {
+                this.getUserList(this.currentPage, this.limit, this.localdate, this.form.phone);
+            },
+
+            handleInfo(){
+                console.log("获取用户详细信息！！！");
+            }
 
         },
     }

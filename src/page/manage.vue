@@ -9,6 +9,8 @@
                     <el-submenu index="2">
                         <template slot="title"><i class="el-icon-document"></i>我自己的</template>
                         <el-menu-item index="myUserList">我的用户</el-menu-item>
+                        <el-menu-item index="myAddCoupon">添加红包</el-menu-item>
+                        <el-menu-item index="myAddGoods">添加商品</el-menu-item>
                     </el-submenu>
 
 					<el-submenu index="3">

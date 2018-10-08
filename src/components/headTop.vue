@@ -18,8 +18,6 @@
 </template>
 
 <script>
-    import {signout} from '@/api/getData'
-    import {baseImgPath} from '@/config/env'
     import {mapActions, mapState, mapGetters} from 'vuex'
     import {baseUrl} from '../config/env'
 
@@ -34,7 +32,6 @@
         },
 
         mounted() {
-            console.log("=======> " + this.getToken());
             if (this.getToken() == null || this.getToken() === 'null' || this.getToken() === '') {
                 this.handleCommand('singout');
             }
