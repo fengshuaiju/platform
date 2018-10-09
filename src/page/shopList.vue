@@ -226,7 +226,7 @@
                     this.getCategory();
                 }
             },
-            addFood(index, row){
+            addGoods(index, row){
                 this.$router.push({ path: 'addGoods', query: { restaurant_id: row.id }})
             },
             async handleDelete(index, row) {

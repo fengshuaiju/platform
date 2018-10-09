@@ -36,7 +36,7 @@
                     <div class="add_category_button" @click="addCategoryFun">
                         <i class="el-icon-caret-top edit_icon" v-if="showAddCategory"></i>
                         <i class="el-icon-caret-bottom edit_icon" v-else slot="icon"></i>
-                        <span>添加食品种类</span>
+                        <span>添商品种类</span>
                     </div>
                 </el-form>
 
@@ -63,7 +63,7 @@
                             class="avatar-uploader"
                             :action="uploadUrl()"
                             :show-file-list="false"
-                            :on-success="uploadImg"
+                            :on-success="uploadImgSuccess"
                             :before-upload="beforeImgUpload">
                             <img v-if="goodsForm.imagePath" :src="goodsForm.imagePath" class="avatar">
                             <i v-else class="el-icon-plus avatar-uploader-icon"></i>
@@ -93,54 +93,69 @@
                         </el-table>
                     </el-row>
 
-                    <el-row style="overflow: auto; text-align: center;">
-                        <el-button type="primary" @click="addFood('goodsForm')">确认添加商品</el-button>
+                    <!--弹出框，添加规格-->
+                    <el-dialog title="添加规格" v-model="dialogFormVisible">
+                        <el-form :rules="specsFormrules" :model="specsForm">
+                            <el-form-item label="规格名称" label-width="100px" prop="name">
+                                <el-input v-model="specsForm.name" auto-complete="off"></el-input>
+                            </el-form-item>
+
+                            <el-form-item label="下级规格" label-width="100px">
+                                <el-tag :key="tag" v-for="tag in specsForm.label"
+                                        closable :disable-transitions="false" @close="handleClose(tag)">
+                                    {{tag}}
+                                </el-tag>
+                                <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue"
+                                          ref="saveTagInput" size="small"
+                                          @keyup.enter.native="handleInputConfirm"
+                                          @blur="handleInputConfirm"
+                                >
+                                </el-input>
+                                <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
+                            </el-form-item>
+
+                        </el-form>
+                        <div slot="footer" class="dialog-footer">
+                            <el-button @click="dialogFormVisible = false">取 消</el-button>
+                            <el-button type="primary" @click="addspecs">确 定</el-button>
+                        </div>
+                    </el-dialog>
+
+
+                    <!--富文本框-->
+                    <el-row v-show="!dialogFormVisible" style="overflow: auto; text-align: center;">
+                        <header class="form_header">商品介绍</header>
+                        <div id="editorElem" style="text-align:left"></div>
+                        <!--<button v-on:click="getContent">查看内容</button>-->
+                    </el-row>
+
+
+                    <el-row style="overflow: auto; text-align: center; margin-top: 10px">
+                        <el-button type="primary" @click="addGoods('goodsForm')">确认添加商品</el-button>
                     </el-row>
                 </el-form>
-
-                <el-dialog title="添加规格" v-model="dialogFormVisible">
-                    <el-form :rules="specsFormrules" :model="specsForm">
-                        <el-form-item label="规格名称" label-width="100px" prop="name">
-                            <el-input v-model="specsForm.name" auto-complete="off"></el-input>
-                        </el-form-item>
-
-                        <el-form-item label="下级规格" label-width="100px">
-                            <el-tag :key="tag" v-for="tag in specsForm.label"
-                                closable :disable-transitions="false" @close="handleClose(tag)">
-                                {{tag}}
-                            </el-tag>
-                            <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue"
-                                ref="saveTagInput" size="small"
-                                @keyup.enter.native="handleInputConfirm"
-                                @blur="handleInputConfirm"
-                            >
-                            </el-input>
-                            <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
-                        </el-form-item>
-
-                    </el-form>
-                    <div slot="footer" class="dialog-footer">
-                        <el-button @click="dialogFormVisible = false">取 消</el-button>
-                        <el-button type="primary" @click="addspecs">确 定</el-button>
-                    </div>
-                </el-dialog>
 
 
             </el-col>
         </el-row>
     </div>
+
 </template>
 
 <script>
     import headTop from '../components/headTop'
     import {baseUrl} from '../config/env'
     import {mapGetters} from 'vuex'
-
+    import E from 'wangeditor'
 
     export default {
+        name: 'editor',
         data(){
             return {
-                baseUrl,
+                editor: null,
+                editorImgUrl: '',
+                editorContent: '',
+                baseUrl:'',
                 restaurant_id: 1,
                 categoryForm: {
                     categoryList: [],
@@ -154,6 +169,7 @@
                     isSupportCutDown: false,
                     name: '',
                     remark:'',
+                    content:'',
                     characteristic: '',
                     imagePath: '',
                     properties: [],
@@ -172,9 +188,6 @@
                     ],
                 },
 
-                showAddCategory: false,
-                dialogFormVisible: false,
-
                 goodsrules: {
                     name: [
                         { required: true, message: '请输入食品名称', trigger: 'blur' },
@@ -182,8 +195,10 @@
                     categoryId: [
                         { required: true, message: '请选择商品类型', trigger: 'blur' },
                     ],
-
                 },
+
+                showAddCategory: false,
+                dialogFormVisible: false,
 
                 inputVisible: false,
                 inputValue: ''
@@ -191,6 +206,30 @@
         },
         components: {
             headTop,
+        },
+        mounted: function(){
+            this.editor = new E('#editorElem');
+            this.editor.customConfig.onchange = (html) => {
+                this.editorContent = html;
+                this.goodsForm.content = html;
+            };
+            this.editor.customConfig.uploadImgServer = '/upload'; // 上传图片到服务器
+            this.editor.customConfig.uploadImgMaxSize = 3 * 1024 * 1024;//限制图片大小
+
+            //函数内不能直接使用this. 此处转换一下
+            let uploadImage = this.uploadImage;
+
+            this.editor.customConfig.customUploadImg = function (files, insert) {
+                // files 是 input 中选中的文件列表
+                // insert 是获取图片 url 后，插入到编辑器的方法
+
+                uploadImage(files[0], function (data) {
+                    // 上传代码返回结果之后，将图片插入到编辑器中
+                    insert(data);
+                });
+            };
+
+            this.editor.create();
         },
         created(){
             this.initCategory();
@@ -202,6 +241,10 @@
         },
         methods: {
             ...mapGetters(['getToken']),
+
+            getContent: function () {
+                alert(this.editorContent);
+            },
 
             uploadUrl(){
                 return baseUrl + "/baby/open/file"
@@ -259,7 +302,7 @@
                     }
                 });
             },
-            uploadImg(res, file) {
+            uploadImgSuccess(res, file) {
                 this.goodsForm.imagePath = res.basePath + "/" +res.picUrl;
             },
             beforeImgUpload(file) {
@@ -295,17 +338,11 @@
                 return '';
             },
 
-            addFood(goodsForm){
-                // this.specsForm.categoryId =
+            addGoods(goodsForm){
 
                 this.$refs[goodsForm].validate(async (valid) => {
                     if (valid) {
-                        // const params = {
-                        //     ...this.goodsForm,
-                        //     category_id: this.selectValue.id,
-                        // };
                         try{
-
                             this.$axios({
                                 method: 'POST',
                                 url: baseUrl + "/baby/shop/goods",
@@ -315,22 +352,27 @@
                                 },
                                 data: JSON.stringify(this.goodsForm)
                             }).then((res) => {
-
-                                if (res.statusCode === 201) {
+                                if (res.status === 201) {
                                     this.$message({
                                         type: 'success',
                                         message: '添加成功'
                                     });
                                     this.goodsForm = {
                                         name: '',
+                                        isSupportGroup: false,
+                                        isSupportCutDown: false,
                                         characteristic: '',
                                         imagePath: '',
                                         attributes: [],
-                                    }
+                                        remark:'',
+                                        content:'',
+                                    };
+                                    this.editor.txt.clear();
+                                    this.categoryForm.categorySelect = '';
                                 }else{
                                     this.$message({
                                         type: 'error',
-                                        message: res.message
+                                        message: '添加数据失败'
                                     });
                                 }
 
@@ -352,6 +394,25 @@
                 });
             },
 
+
+            uploadImage(file, callback){
+                let formData = new FormData();
+                formData.append("file", file);
+                let headers = {headers: {"Content-Type": "multipart/form-data"}};
+                this.$axios.post(baseUrl  + "/baby/open/file", formData, headers).then((res) => {
+                    if (res.status === 200) {
+                        this.editorImgUrl = res.data.basePath + "/" +res.data.picUrl;
+                        callback(this.editorImgUrl);
+                    }else{
+                        this.$message({
+                            type: 'error',
+                            message: '添加数据失败'
+                        });
+                    }
+                }).catch((res) => {
+                    console.log(res)
+                });
+            },
 
             handleClose(tag) {
                 this.specsForm.label.splice(this.specsForm.label.indexOf(tag), 1);
@@ -466,9 +527,6 @@
     .cell{
         text-align: center;
     }
-
-
-
 
 
     .el-tag + .el-tag {

@@ -314,7 +314,7 @@
 		        }
 		        return '';
 		    },
-		    addFood(foodForm){
+		    addGoods(foodForm){
 		    	this.$refs[foodForm].validate(async (valid) => {
 					if (valid) {
 						const params = {
