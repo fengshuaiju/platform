@@ -4,14 +4,11 @@
         <div class="table_container">
 
             <el-form :inline="true" :model="form" class="demo-form-inline">
-                <el-form-item label="手机号">
-                    <el-input v-model="form.phone" placeholder="手机号"></el-input>
-                </el-form-item>
 
-                <el-form-item label="注册日期">
+                <el-form-item label="查询条件">
                     <el-col :span="22">
                         <el-form-item prop="date">
-                            <el-date-picker type="date" placeholder="选择日期" @change="changeDate" value-format="yyyy-MM-dd" format="yyyy-MM-dd" v-model="form.date" style="width: 100%;"></el-date-picker>
+                            <el-checkbox v-model="form.showAll">是否查询作废折扣</el-checkbox>
                         </el-form-item>
                     </el-col>
                 </el-form-item>
@@ -24,18 +21,20 @@
 
             <el-table :data="tableData" highlight-current-row style="width: 100%">
                 <el-table-column type="index" width="100"></el-table-column>
-                <el-table-column property="createdAt" label="注册日期" width="250"></el-table-column>
-                <el-table-column property="nickName" label="用户昵称" width="220"></el-table-column>
-                <el-table-column property="gender" label="性别" width="100"></el-table-column>
-                <el-table-column property="cellphone" label="电话" width="250"></el-table-column>
-                <el-table-column property="avatarUrl" label="头像" width="120">
+                <el-table-column property="couponName" label="红包名称" width="250"></el-table-column>
+                <el-table-column property="amountOfMoney" label="红包金额" width="220"></el-table-column>
+                <el-table-column property="requirementConsumption" label="满减金额" width="100"></el-table-column>
+                <el-table-column property="type" label="红包类型" width="250"></el-table-column>
+                <el-table-column property="picUrl" label="图片" width="120">
                     <template  slot-scope="scope">
-                        <img :src="scope.row.avatarUrl" class="avator" style="margin-top: 8px"/>
+                        <img :src="scope.row.picUrl" class="avator" style="margin-top: 8px"/>
                     </template>
                 </el-table-column>
-                <el-table-column label="操作">
+                <el-table-column property="expiryTimeAt" label="过期时间" width="120"></el-table-column>
+                <el-table-column property="isAvailable" label="是否可用" width="120">
                     <template slot-scope="scope">
-                        <el-button size="middle" @click="handleInfo(scope.row.wechatOpenId)">详细信息</el-button>
+                        <el-button v-if="scope.row.showAll" type="primary">未过期</el-button>
+                        <el-button v-else type="danger">已过期</el-button>
                     </template>
                 </el-table-column>
             </el-table>
@@ -46,7 +45,7 @@
                                 :page-size="limit"
                                :total="count"
                                :current-page="currentPage"
-                               @current-change="handleCurrentChange"
+                               @current-change=""
                                @size-change="handleSizeChange">
                 </el-pagination>
             </div>
@@ -60,6 +59,7 @@
     import {baseUrl} from '../config/env'
     import {mapGetters} from 'vuex'
 
+
     export default {
         data() {
             return {
@@ -69,13 +69,11 @@
                 limit: 10,
                 count: 0,//总数目
                 currentPage: 1,
-
                 localdate: '',
-                form: {
-                    phone: '',
-                    date: ''
-                },
 
+                form: {
+                    showAll: true,
+                },
             }
         },
         components: {
@@ -96,18 +94,21 @@
             //更换每页大小
             handleSizeChange(val) {
                 this.limit = val;
-                this.getGoodsList(this.currentPage, this.limit, this.localdate, this.form.phone);
-            },
-            //更换页数
-            handleCurrentChange(val) {
-                this.currentPage = val;
-                this.getGoodsList(this.currentPage, this.limit);
+                this.getGoodsList(this.currentPage, this.limit, this.form.isAvailable);
             },
 
-            getGoodsList(page, size, date, phone) {
+            // //更换页数
+            // handleCurrentChange(val) {
+            //     console.log("handleCurrentChange");
+            //
+            //     this.currentPage = val;
+            //     this.getGoodsList(this.currentPage, this.limit);
+            // },
+
+            getGoodsList(page, size, showAll) {
                 this.$axios({
                     method: 'GET',
-                    url: baseUrl + "/baby/user/list",
+                    url: baseUrl + "/baby/platform/discounts/available",
                     headers: {
                         'Authorization': 'Bearer ' + this.getToken()
                     },
@@ -115,8 +116,7 @@
                         page: page -1,
                         size: size,
 
-                        date: date,
-                        phone: phone
+                        showAll: showAll
                     }
                 }).then((res) => {
                     this.tableData = res.data.content;
@@ -134,13 +134,13 @@
             },
 
             onSubmit() {
-                this.getGoodsList(this.currentPage, this.limit, this.localdate, this.form.phone);
+                console.log("onSubmit");
+                this.getGoodsList(this.currentPage, this.limit, this.form.showAll);
             },
 
             editGoodsInfo(){
                 console.log("获取用户详细信息！！！");
             }
-
         },
     }
 </script>

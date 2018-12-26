@@ -25,6 +25,8 @@ const explain = r => require.ensure([], () => r(require('@/page/explain')), 'exp
 const myUserList = r => require.ensure([], () => r(require('@/page/myUserList')), 'myUserList');
 const myAddCoupon = r => require.ensure([], () => r(require('@/page/myAddCoupon')), 'myAddCoupon');
 const myAddGoods = r => require.ensure([], () => r(require('@/page/myAddGoods')), 'myAddGoods');
+const myGoodsList = r => require.ensure([], () => r(require('@/page/myGoodsList')), 'myGoodsList');
+const myCouponList = r => require.ensure([], () => r(require('@/page/myCouponList')), 'myCouponList');
 
 const routes = [
 	{
@@ -52,6 +54,14 @@ const routes = [
             path: '/myAddGoods',
             component: myAddGoods,
             meta: ['我自己的', '添加商品'],
+        },{
+            path: '/myGoodsList',
+            component: myGoodsList,
+            meta: ['我自己的', '商品列表'],
+        },{
+            path: '/myCouponList',
+            component: myCouponList,
+            meta: ['我自己的', '红包列表'],
         },{
 			path: '/addShop',
 			component: addShop,
