@@ -13,6 +13,8 @@
                         <el-menu-item index="myAddCoupon">添加红包</el-menu-item>
                         <el-menu-item index="myAddGoods">添加商品</el-menu-item>
                         <el-menu-item index="myGoodsList">商品列表</el-menu-item>
+                        <el-menu-item index="myCutDownInfoList">砍价列表</el-menu-item>
+                        <el-menu-item index="myBannerList">轮播列表</el-menu-item>
                     </el-submenu>
 
 					<el-submenu index="3">

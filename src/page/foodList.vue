@@ -134,7 +134,7 @@
 					<el-button type="primary" @click="specsFormVisible = true" style="margin-bottom: 10px;">添加规格</el-button>
 				</el-row>
               <div slot="footer" class="dialog-footer">
-                <el-button @click="dialogFormVisible = false">取 消</el-button>
+                <el-button @click="showPriceVisible = false">取 消</el-button>
                 <el-button type="primary" @click="updateFood">确 定</el-button>
               </div>
             </el-dialog>
@@ -149,7 +149,7 @@
 						<el-input-number v-model="specsForm.packing_fee" :min="0" :max="100"></el-input-number>
 					</el-form-item>
 					<el-form-item label="价格" label-width="100px">
-						<el-input-number v-model="specsForm.price" :min="0" :max="10000"></el-input-number>
+						<el-input-number v-model="specsForm.priceList" :min="0" :max="10000"></el-input-number>
 					</el-form-item>
 			  	</el-form>
 			  <div slot="footer" class="dialog-footer">
@@ -178,14 +178,14 @@
                 tableData: [],
                 currentPage: 1,
                 selectTable: {},
-                dialogFormVisible: false,
+                showPriceVisible: false,
                 menuOptions: [],
                 selectMenu: {},
                 selectIndex: null,
                 specsForm: {
 		          	specs: '',
 		          	packing_fee: 0,
-		          	price: 20,
+		          	priceList: 20,
 		        },
                 specsFormrules: {
 		        	specs: [
@@ -208,7 +208,7 @@
 	        			specs.push({
 	        				specs: item.specs_name,
 	        				packing_fee: item.packing_fee,
-	        				price: item.price,
+	        				priceList: item.priceList,
 	        			})
 	        		})
         		}
@@ -277,7 +277,7 @@
 				this.specs.push({...this.specsForm});
 				this.specsForm.specs = '';
 				this.specsForm.packing_fee = 0;
-				this.specsForm.price = 20;
+				this.specsForm.priceList = 20;
 				this.specsFormVisible = false;
 			},
 			deleteSpecs(index){

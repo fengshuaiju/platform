@@ -108,8 +108,7 @@
                                 <el-input class="input-new-tag" v-if="inputVisible" v-model="inputValue"
                                           ref="saveTagInput" size="small"
                                           @keyup.enter.native="handleInputConfirm"
-                                          @blur="handleInputConfirm"
-                                >
+                                          @blur="handleInputConfirm">
                                 </el-input>
                                 <el-button v-else class="button-new-tag" size="small" @click="showInput">+ New Tag</el-button>
                             </el-form-item>
@@ -176,6 +175,7 @@
                 },
 
                 specsForm: {
+                    index: 1,
                     name: '',
                     label: [],
                 },
@@ -321,6 +321,7 @@
             addspecs(){
                 this.goodsForm.properties.push({...this.specsForm});
 
+                this.specsForm.index ++;
                 this.specsForm.name = '';
                 this.specsForm.label = [];
                 this.dialogFormVisible = false;
@@ -328,6 +329,7 @@
 
             handleDelete(index){
                 this.goodsForm.properties.splice(index, 1);
+                this.specsForm.index --;
             },
             tableRowClassName(row, index) {
                 if (index === 1) {
@@ -345,7 +347,7 @@
                         try{
                             this.$axios({
                                 method: 'POST',
-                                url: baseUrl + "/baby/shop/goods",
+                                url: baseUrl + "/baby/shop/goods/platform",
                                 headers: {
                                     'Content-Type': 'application/json',
                                     // 'Authorization': 'Bearer ' + this.getToken()
